@@ -1,0 +1,20 @@
+[
+    {
+        "name": "noam",
+        "password": "123456",
+        "projects": [],
+        "admin": true
+    },
+    {
+        "name": "noam2",
+        "password": "1234",
+        "projects": ["test"],
+        "admin": false
+    },
+    {
+        "name": "test",
+        "password": "test",
+        "projects": ["test"],
+        "admin": false
+    }
+]

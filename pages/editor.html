@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+    <head>
+        <title>IDE - Editeur [projectname]</title>
+        <script src = "/socket.io/socket.io.js"></script>
+        <!-- Importation de la bibliothèque javascript codemirror -->
+        <script src="codemirror/lib/codemirror.js"></script>
+        <link href="codemirror/lib/codemirror.css" rel="stylesheet"/>
+        <!-- Importation des modes -->
+        <script src="codemirror/mode/xml/xml.js"></script>
+        <script src="codemirror/mode/css/css.js"></script>
+        <script src="codemirror/mode/javascript/javascript.js"></script>
+        <script src="codemirror/mode/python/python.js"></script>
+        <!-- Importation du thème -->
+        <link href="codemirror/theme/dracula.css" rel="stylesheet"/>
+        
+        <!-- Importation des addon' -->
+        <script src="codemirror/addon/edit/closetag.js"></script>
+        <script src="codemirror/addon/edit/closebrackets.js"></script>
+        <script src="codemirror/addon/edit/matchtags.js"></script>
+        <script src="codemirror/addon/edit/matchbrackets.js"></script>
+        <script src="codemirror/addon/fold/xml-fold.js"></script>
+        
+        <script src="codemirror/addon/lint/lint.js"></script>
+        <link href="codemirror/addon/lint/lint.css" rel="stylesheet"/>
+        <script src="codemirror/addon/lint/css-lint.js"></script>
+        
+        <script src="codemirror/addon/hint/show-hint.js"></script>
+        <link href="codemirror/addon/hint/show-hint.css" rel="stylesheet"/>
+        <script src="codemirror/addon/hint/xml-hint.js"></script>
+        <script src="codemirror/addon/hint/html-hint.js"></script>
+        
+    </head>
+    <body>
+        <h1>Edition du projet [projectname]</h1>
+        <textarea id="editeur" name="code" class="editeur">[code]</textarea>
+        <script>
+            var editor = CodeMirror.fromTextArea(document.getElementById('editeur'), {
+                mode: "python",
+                theme: "dracula",
+                lineNumbers: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+                matchTags: { bothTags: true },
+                matchBrackets: true,
+                indentLine: true,
+                indentAuto: true,
+                newlineAndIndent: true,
+                extraKeys: {"Ctrl-Space": "autocomplete"},
+            });    
+        </script>
+        <button onclick="execute()">Executer</button>
+        <textarea id="console">[console]</textarea>
+
+        <script>
+            const socket = io();
+            let last_sent = ""
+            let token_temporaire = ""
+
+            socket.emit('token')
+            socket.on('token', function(token) { token_temporaire = token })
+
+            socket.emit("identify", localStorage.getItem('ide-en-ligne'))
+            console.log(localStorage.getItem('ide-en-ligne'))
+
+            editor.on('change', function (event) {
+                const newText = event.getValue();
+                if (newText == last_sent) return;
+                socket.emit('edit', {text: newText, origine: token_temporaire});
+            });
+
+            socket.on('no_login', function() {
+                localStorage.removeItem("ide-en-ligne")
+                window.location.replace("/login")
+            });
+
+            socket.on('exe_result', function(result) {
+                document.getElementById("console").innerText = result.join("\n")
+            })
+            function execute() {
+                let code = editor.getValue();
+                socket.emit('exe_send', code)
+            }
+
+            socket.on('text', (data) => {
+                last_sent = data.text
+                if (data.origine != token_temporaire) editor.setValue(data.text);
+            });
+            
+
+        </script>
+    </body>
+</html>

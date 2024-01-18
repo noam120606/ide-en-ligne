@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <title>IDE - Login</title>
+        <style>
+            .err {
+                display: block;
+                color: red;
+            }
+            label, input {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <form action="/login" method="GET" class="login">
+            <span class="err">[erreur]</span>
+            <label for="username">Enter your username: </label>
+            <input type="text" name="username" id="username" required />
+            <label for="password">Enter your password: </label>
+            <input type="text" name="password" id="password" required />
+            <input type="submit" value="Login" />
+        </form>
+        <script>
+            let token = localStorage.getItem("ide-en-ligne")
+        </script>
+    </body>
+</html>

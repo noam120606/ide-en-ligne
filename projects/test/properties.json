@@ -1,0 +1,11 @@
+{
+    "name": "test",
+    "owner": "noam",
+    "path": "/projects/test",
+    "members": [
+        {
+            "username": "noam2",
+            "perm": "editeur"
+        }
+    ]
+}

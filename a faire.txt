@@ -1,0 +1,12 @@
+- Profil
+- Système de projets 
+- Gestion de fichiers 
+
+
+
+
+- Gestion des extensions de fichiers (.js / .py ...)
+
+- Input
+- Indentation 
+- Interface 
